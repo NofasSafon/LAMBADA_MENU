@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LYMBADA MENU</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --accent-color: #ff9800;
+            --price-color: #ffd700;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        header {
+            background-color: #000;
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            border-bottom: 3px solid var(--accent-color);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        nav {
+            background-color: #2c2c2c;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 10px 0;
+            position: sticky;
+            top: 85px; /* Adjust based on header height */
+            z-index: 900;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 15px;
+            display: inline-block;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            border-radius: 20px;
+            margin: 0 5px;
+        }
+
+        nav a:hover, nav a:active {
+            background-color: var(--accent-color);
+            color: #000;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 15px;
+            padding-bottom: 80px;
+        }
+
+        .category-title {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            margin-top: 50px;
+            margin-bottom: 25px;
+            font-size: 2rem;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .subcategory-title {
+            color: #fff;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            padding-left: 15px;
+            border-left: 5px solid var(--accent-color);
+            background: linear-gradient(90deg, #333 0%, transparent 100%);
+            padding: 5px 15px;
+        }
+
+        .menu-item {
+            background-color: var(--card-bg);
+            margin-bottom: 15px;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+        
+        .menu-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255, 152, 0, 0.1);
+        }
+
+        .menu-item img {
+            width: 90px;
+            height: 90px;
+            object-fit: cover;
+            flex-shrink: 0;
+            border-right: 1px solid #333;
+        }
+
+        .item-details {
+            padding: 10px 15px;
+            flex-grow: 1;
+            min-width: 0; /* Prevents text overflow issues */
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 4px;
+        }
+
+        .item-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #fff;
+            line-height: 1.2;
+            padding-right: 10px;
+        }
+
+        .item-price {
+            font-weight: 800;
+            color: var(--price-color);
+            font-size: 1.25rem;
+            white-space: nowrap;
+        }
+
+        .item-meta {
+             font-size: 0.8rem;
+             color: var(--accent-color);
+             display: block;
+             margin-bottom: 4px;
+             font-weight: bold;
+        }
+
+        .item-ingredients {
+            font-size: 0.85rem;
+            color: #bbb;
+            font-style: italic;
+            line-height: 1.3;
+        }
+
+        .set-box {
+            background: linear-gradient(45deg, #2c2c2c, #1a1a1a);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 2px solid var(--accent-color);
+            text-align: center;
+        }
+        .set-box h3 { margin-top: 0; color: var(--accent-color); }
+        .set-box p { font-size: 1.1rem; margin: 10px 0; }
+        .set-price { color: var(--price-color); font-weight: bold; font-size: 1.3rem; }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: #000;
+            color: #666;
+            margin-top: 50px;
+            border-top: 1px solid #333;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 400px) {
+            .menu-item img { width: 70px; height: 70px; }
+            .item-name { font-size: 1rem; }
+            .item-price { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>LAMBADA</h1>
+</header>
+
+<nav>
+    <a href="#cocktails">Cocktails</a>
+    <a href="#shots">Shots</a>
+    <a href="#alcohol">Alkohol</a>
+    <a href="#liqueurs">Likery</a>
+    <a href="#wine-beer">Vino & Pivo</a>
+    <a href="#soft">Nealko</a>
+    <a href="#snacks">Snacks</a>
+</nav>
+
+<div class="container">
+
+    <section id="cocktails">
+        <h2 class="category-title">1. Cocktails</h2>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Long%20Island%20Iced%20Tea%20cocktail%20drink" alt="Long Island"><div class="item-details"><div class="item-header"><span class="item-name">LONG ISLAND</span><span class="item-price">7,- ˆ</span></div><span class="item-meta">0,3 l</span><div class="item-ingredients">Vodka, biely rum, tequila, gin, triple sec, cukrovy sirup, citron, cola</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Pina%20Colada%20cocktail%20pineapple" alt="Pina Colada"><div class="item-details"><div class="item-header"><span class="item-name">PINA COLADA</span><span class="item-price">7,- ˆ</span></div><span class="item-meta">0,3 l</span><div class="item-ingredients">Biely rum, tmavy rum, kokosovy sirup, ananas dzus, slahacka</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Cuba%20Libre%20cocktail%20drink" alt="Cubalibre"><div class="item-details"><div class="item-header"><span class="item-name">CUBALIBRE</span><span class="item-price">5,5 ˆ</span></div><span class="item-meta">0,3 l</span><div class="item-ingredients">Biely rum, cola, citronova stava, limetka</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Aperol%20Spritz%20orange%20drink" alt="Martini Spritz"><div class="item-details"><div class="item-header"><span class="item-name">MARTINI SPRITZ</span><span class="item-price">6,- ˆ</span></div><span class="item-meta">0,25 l</span><div class="item-ingredients">Martini Fiero, prosecco, soda, pomaranc</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Negroni%20cocktail%20drink" alt="Negroni"><div class="item-details"><div class="item-header"><span class="item-name">NEGRONI</span><span class="item-price">6,- ˆ</span></div><span class="item-meta">0,12 l</span><div class="item-ingredients">Campari, Martini Fiero, gin, pomaranc</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Gin%20Tonic%20lime%20cocktail" alt="Gintonic"><div class="item-details"><div class="item-header"><span class="item-name">GINTONIC</span><span class="item-price">5,5 ˆ</span></div><span class="item-meta">0,3 l</span><div class="item-ingredients">Gin, tonic, limetka</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Fernet%20stock%20tonic%20cocktail" alt="Bavorak"><div class="item-details"><div class="item-header"><span class="item-name">BAVORAK</span><span class="item-price">5,5 ˆ</span></div><span class="item-meta">0,3 l</span><div class="item-ingredients">Fernet ]Stock, tonic, limetka</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Becherovka%20tonic%20cocktail" alt="Beton"><div class="item-details"><div class="item-header"><span class="item-name">BETON</span><span class="item-price">5,5 ˆ</span></div><span class="item-meta">0,3 l</span><div class="item-ingredients">Becherovka, tonic, limetka</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Cosmopolitan%20cocktail%20red" alt="Cosmopolitan"><div class="item-details"><div class="item-header"><span class="item-name">COSMOPOLITAN</span><span class="item-price">6,- ˆ</span></div><span class="item-meta">0,12 l</span><div class="item-ingredients">Vodka, triple sec, grenadina, limetka, pomaranc</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/White%20Russian%20cocktail" alt="White Russian"><div class="item-details"><div class="item-header"><span class="item-name">WHITE RUSSIAN</span><span class="item-price">5,5 ˆ</span></div><span class="item-meta">0,12 l</span><div class="item-ingredients">Vodka, kavovy liker, slahacka</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Mojito%20cocktail%20mint" alt="Mojito"><div class="item-details"><div class="item-header"><span class="item-name">MOJITO</span><span class="item-price">7,- ˆ</span></div><span class="item-meta">0,3 l</span><div class="item-ingredients">Biely rum, cukrovy sirup, sprite, limetka, mata</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Margarita%20cocktail%20salt%20rim" alt="Margarita"><div class="item-details"><div class="item-header"><span class="item-name">MARGARITA</span><span class="item-price">6,- ˆ</span></div><span class="item-meta">0,12 l</span><div class="item-ingredients">Tequila, triple sec, limetka, sol</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Old%20Fashioned%20cocktail%20whiskey" alt="Old Fashion"><div class="item-details"><div class="item-header"><span class="item-name">OLD FASHION</span><span class="item-price">5,5 ˆ</span></div><span class="item-meta">0,1 l</span><div class="item-ingredients">Red Walker, Martini Fiero, cukor, visna</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Daiquiri%20cocktail%20lime" alt="Daiquiri"><div class="item-details"><div class="item-header"><span class="item-name">DAIQUIRI</span><span class="item-price">6,- ˆ</span></div><span class="item-meta">0,12 l</span><div class="item-ingredients">Biely rum, cukrovy sirup, limetkova stava</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Orange%20vodka%20cocktail%20beach" alt="Sex on the Beach"><div class="item-details"><div class="item-header"><span class="item-name">SEX ON THE BEACH</span><span class="item-price">6,- ˆ</span></div><span class="item-meta">0,3 l</span><div class="item-ingredients">Vodka, peach vodka, pomaranc dzus, grenadina</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Tequila%20Sunrise%20cocktail" alt="Tequila Sunrise"><div class="item-details"><div class="item-header"><span class="item-name">TEQUILA SUNRISE</span><span class="item-price">6,- ˆ</span></div><span class="item-meta">0,3 l</span><div class="item-ingredients">Tequila, grenadina, pomarancovy dzus</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Mimosa%20cocktail%20orange" alt="Mimosa"><div class="item-details"><div class="item-header"><span class="item-name">MIMOSA</span><span class="item-price">4,- ˆ</span></div><span class="item-meta">0,2 l</span><div class="item-ingredients">Prosecco, pomarancovy dzus</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/French%2075%20cocktail" alt="French 75"><div class="item-details"><div class="item-header"><span class="item-name">FRENCH 75</span><span class="item-price">5,5 ˆ</span></div><span class="item-meta">0,12 l</span><div class="item-ingredients">Gin, prosecco, cukrovy sirup, citron</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Whiskey%20Sour%20cocktail" alt="Whisky Sour"><div class="item-details"><div class="item-header"><span class="item-name">WHISKY SOUR</span><span class="item-price">5,5 ˆ</span></div><span class="item-meta">0,1 l</span><div class="item-ingredients">Whisky, limetka, citron, sirup</div></div></div>
+        
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Pink%20gin%20cocktail%20cream" alt="Anjelova Ziara"><div class="item-details"><div class="item-header"><span class="item-name">ANJELOVA ZIARA</span><span class="item-price">5,5 ˆ</span></div><span class="item-meta">0,1 l</span><div class="item-ingredients">Grenadina, triple sec, gin, slahacka</div></div></div>
+    </section>
+
+    <section id="shots">
+        <h2 class="category-title">2. Shots</h2>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/B52%20shot%20layered%20drink" alt="B-52"><div class="item-details"><div class="item-header"><span class="item-name">B-52</span><span class="item-price">2,5 ˆ</span></div><div class="item-ingredients">Kavovy liker, Baileys, absinth</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/layered%20cream%20shot%20drink" alt="Blow Job"><div class="item-details"><div class="item-header"><span class="item-name">Blow Job</span><span class="item-price">3,- ˆ</span></div><div class="item-ingredients">Kavovy liker, Baileys, slahacka</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/peach%20vodka%20shot" alt="Solar Kiss"><div class="item-details"><div class="item-header"><span class="item-name">Solar Kiss</span><span class="item-price">2,5 ˆ</span></div><div class="item-ingredients">Peach vodka, limetkovy sirup, limetka</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/rum%20shot%20lime" alt="Storm"><div class="item-details"><div class="item-header"><span class="item-name">Storm</span><span class="item-price">2,5 ˆ</span></div><div class="item-ingredients">Biely rum, limetkovy sirup, citron</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/jagermeister%20red%20bull%20shot" alt="Dark Energy"><div class="item-details"><div class="item-header"><span class="item-name">Dark Energy</span><span class="item-price">2,5 ˆ</span></div><div class="item-ingredients">Jagermeister, Red Bull</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/red%20spicy%20vodka%20shot" alt="Diablov dotyk"><div class="item-details"><div class="item-header"><span class="item-name">Diablov dotyk</span><span class="item-price">3,- ˆ</span></div><div class="item-ingredients">Vodka, absinth, tabasko</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/green%20vodka%20shot" alt="Acid"><div class="item-details"><div class="item-header"><span class="item-name">Acid</span><span class="item-price">3,- ˆ</span></div><div class="item-ingredients">Vodka, stava citronova, limetkovy sirup</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/orange%20shot%20alcohol" alt="Orange Bullet"><div class="item-details"><div class="item-header"><span class="item-name">Orange Bullet</span><span class="item-price">2,5 ˆ</span></div><div class="item-ingredients">Vodka, Martini Fiero, limetkovy sirup</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/baileys%20shot%20red%20drop" alt="Bradavka"><div class="item-details"><div class="item-header"><span class="item-name">Bradavka</span><span class="item-price">3,- ˆ</span></div><div class="item-ingredients">Baileys, sambuca, grenadina</div></div></div>
+
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/gin%20shot%20clear" alt="Buchana"><div class="item-details"><div class="item-header"><span class="item-name">Buchana</span><span class="item-price">2,- ˆ</span></div><div class="item-ingredients">Borovicka, Sprite</div></div></div>
+
+        <div class="set-box">
+            <h3>SETY (Vyhodne sady)</h3>
+            <p><strong>TOP-SHOT:</strong> (B-52, 2x Blow Job, 2x Orange Bullet) — <span class="set-price">16 ˆ</span></p>
+            <p><strong>FATAL:</strong> (2x Bradavka, 2x Acid, Diablov dotyk) — <span class="set-price">16 ˆ</span></p>
+        </div>
+    </section>
+
+    <section id="alcohol">
+        <h2 class="category-title">3. Alkohol (Liehoviny)</h2>
+
+        <h3 class="subcategory-title">Vodka</h3>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Absolut%20vodka%20bottle" alt="Absolut"><div class="item-details"><div class="item-header"><span class="item-name">Absolut Vodka 40%</span><span class="item-price">2,6 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Finlandia%20vodka%20bottle" alt="Finlandia"><div class="item-details"><div class="item-header"><span class="item-name">Finlandia Vodka 40%</span><span class="item-price">2,5 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Nikolaus%20vodka%20bottle" alt="Nikolaus"><div class="item-details"><div class="item-header"><span class="item-name">Nikolaus Vodka 38%</span><span class="item-price">2,3 ˆ</span></div></div></div>
+
+        <h3 class="subcategory-title">Gin</h3>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Kensington%20Gin%20bottle" alt="Kensington"><div class="item-details"><div class="item-header"><span class="item-name">Kensington London 37,5%</span><span class="item-price">1,9 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Pink%20Gin%20bottle" alt="Kensington Pink"><div class="item-details"><div class="item-header"><span class="item-name">Kensington Pink 37,5%</span><span class="item-price">1,9 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Beefeater%20Gin%20bottle" alt="Beefeater"><div class="item-details"><div class="item-header"><span class="item-name">Beefeater London 40%</span><span class="item-price">2,5 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Beefeater%20Pink%20Gin%20bottle" alt="Beefeater Pink"><div class="item-details"><div class="item-header"><span class="item-name">Beefeater Pink 37,5%</span><span class="item-price">2,5 ˆ</span></div></div></div>
+
+        <h3 class="subcategory-title">Rum</h3>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Havana%20Club%20Rum%20bottle" alt="Havana"><div class="item-details"><div class="item-header"><span class="item-name">Havana Club 3 Anos</span><span class="item-price">2,7 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Bozkov%20Rum%20bottle" alt="Bozkov"><div class="item-details"><div class="item-header"><span class="item-name">Bozkov Dark Rum 38%</span><span class="item-price">2,5 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Diplomatico%20Rum%20bottle" alt="Diplomatico"><div class="item-details"><div class="item-header"><span class="item-name">Diplomatico Rum 40%</span><span class="item-price">5,2 ˆ</span></div></div></div>
+
+        <h3 class="subcategory-title">Tequila</h3>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/silver%20tequila%20bottle" alt="Silver"><div class="item-details"><div class="item-header"><span class="item-name">Ole/Olmeca Silver</span><span class="item-price">1,9 ˆ / 3,5 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/gold%20tequila%20bottle" alt="Gold"><div class="item-details"><div class="item-header"><span class="item-name">Ole/Olmeca Gold</span><span class="item-price">1,9 ˆ / 3,5 ˆ</span></div></div></div>
+
+        <h3 class="subcategory-title">Whiskey</h3>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Johnnie%20Walker%20Red%20Label%20bottle" alt="Walker"><div class="item-details"><div class="item-header"><span class="item-name">Johnnie Walker Red</span><span class="item-price">3,- ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Jim%20Beam%20Bourbon%20bottle" alt="Jim Beam"><div class="item-details"><div class="item-header"><span class="item-name">Jim Beam Bourbon</span><span class="item-price">3,2 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Tullamore%20Dew%20bottle" alt="Tullamore"><div class="item-details"><div class="item-header"><span class="item-name">Tullamore D.E.W.</span><span class="item-price">3,- ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Jameson%20Whiskey%20bottle" alt="Jameson"><div class="item-details"><div class="item-header"><span class="item-name">Jameson Irish</span><span class="item-price">3,5 ˆ</span></div></div></div>
+
+        <h3 class="subcategory-title">Brandy & Borovicka</h3>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Metaxa%20bottle" alt="Metaxa"><div class="item-details"><div class="item-header"><span class="item-name">Metaxa 5*</span><span class="item-price">2,5 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Karpatske%20Brandy%20bottle" alt="KB"><div class="item-details"><div class="item-header"><span class="item-name">Karpatske Brandy</span><span class="item-price">3,- ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Slovak%20Borovicka%20bottle" alt="Borovicka"><div class="item-details"><div class="item-header"><span class="item-name">Slovenska/Spisska Borovicka</span><span class="item-price">2,2 ˆ</span></div></div></div>
+    </section>
+
+    <section id="liqueurs">
+        <h2 class="category-title">4. Likery / Liehoviny</h2>
+        
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/peach%20liqueur%20bottle" alt="Peach"><div class="item-details"><div class="item-header"><span class="item-name">Peach Liqueur 21%</span><span class="item-price">2,- ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/campari%20bottle" alt="Campari"><div class="item-details"><div class="item-header"><span class="item-name">Campari Bitter 25%</span><span class="item-price">3,- ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/malibu%20rum%20bottle" alt="Malibu"><div class="item-details"><div class="item-header"><span class="item-name">Malibu 21%</span><span class="item-price">2,5 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Martini%20Fiero%20bottle" alt="Martini"><div class="item-details"><div class="item-header"><span class="item-name">Martini Fiero 15%</span><span class="item-price">2,5 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Tatratea%20bottle" alt="Tatratea"><div class="item-details"><div class="item-header"><span class="item-name">Tatratea original 52%</span><span class="item-price">2,8 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Jagermeister%20bottle" alt="Jager"><div class="item-details"><div class="item-header"><span class="item-name">Jagermeister / Orange</span><span class="item-price">2,5 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Baileys%20bottle" alt="Baileys"><div class="item-details"><div class="item-header"><span class="item-name">Baileys 17%</span><span class="item-price">2,5 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Becherovka%20bottle" alt="Becherovka"><div class="item-details"><div class="item-header"><span class="item-name">Becherovka 38%</span><span class="item-price">2,5 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Fernet%20Stock%20bottle" alt="Fernet"><div class="item-details"><div class="item-header"><span class="item-name">Fernet Stock / Citrus</span><span class="item-price">2,2 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Absinth%20green%20bottle" alt="Absinth"><div class="item-details"><div class="item-header"><span class="item-name">Absinth 70%</span><span class="item-price">3,5 ˆ</span></div></div></div>
+    </section>
+
+    <section id="wine-beer">
+        <h2 class="category-title">5. Vino & Pivo</h2>
+        
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/glass%20of%20prosecco" alt="Prosecco"><div class="item-details"><div class="item-header"><span class="item-name">Prosecco</span><span class="item-price">1,2 ˆ</span></div><span class="item-meta">0,1 l</span></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/glass%20of%20red%20wine" alt="Red Wine"><div class="item-details"><div class="item-header"><span class="item-name">Cervene vino</span><span class="item-price">1,6 ˆ</span></div><span class="item-meta">0,1 l</span></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/glass%20of%20white%20wine" alt="White Wine"><div class="item-details"><div class="item-header"><span class="item-name">Biele vino</span><span class="item-price">1,6 ˆ</span></div><span class="item-meta">0,1 l</span></div></div>
+
+        <h3 class="subcategory-title">Pivo</h3>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Pilsner%20Urquell%20beer%20bottle" alt="Pilsner"><div class="item-details"><div class="item-header"><span class="item-name">Pilsner Urquell 12° (Flasa)</span><span class="item-price">2,5 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/non%20alcoholic%20beer%20bottle" alt="Birell"><div class="item-details"><div class="item-header"><span class="item-name">Birell 0%</span><span class="item-price">2,- ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/draft%20beer%20glass" alt="Draft Pilsner"><div class="item-details"><div class="item-header"><span class="item-name">Pilsner Urquell (Capovane)</span><span class="item-price">2,2 / 2,9 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/dark%20beer%20glass" alt="Saris"><div class="item-details"><div class="item-header"><span class="item-name">Saris tmavy 12° (Capovane)</span><span class="item-price">2,- / 2,5 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/kofola%20glass%20drink" alt="Kofola"><div class="item-details"><div class="item-header"><span class="item-name">Kofola original</span><span class="item-price">0,5 - 2,2 ˆ</span></div></div></div>
+    </section>
+
+    <section id="soft">
+        <h2 class="category-title">6. Nealko</h2>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Coca%20Cola%20glass" alt="Cola"><div class="item-details"><div class="item-header"><span class="item-name">Coca-Cola / Zero</span><span class="item-price">2,6 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Fanta%20glass" alt="Fanta"><div class="item-details"><div class="item-header"><span class="item-name">Fanta / Sprite / Tonic</span><span class="item-price">2,6 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/mineral%20water%20glass" alt="Romer"><div class="item-details"><div class="item-header"><span class="item-name">Romer quelle</span><span class="item-price">2,6 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/water%20lemon%20mint" alt="Limonada"><div class="item-details"><div class="item-header"><span class="item-name">Voda s citronom a mata</span><span class="item-price">0,5 - 3 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/red%20bull%20can" alt="Red Bull"><div class="item-details"><div class="item-header"><span class="item-name">Red Bull</span><span class="item-price">3,- ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/fruit%20juice%20glass" alt="Juice"><div class="item-details"><div class="item-header"><span class="item-name">Dzusy (rozne)</span><span class="item-price">2,6 ˆ</span></div></div></div>
+    </section>
+
+    <section id="snacks">
+        <h2 class="category-title">7. Pochutinky</h2>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/Nachos%20chips" alt="Nachos"><div class="item-details"><div class="item-header"><span class="item-name">Nachos</span><span class="item-price">5,- ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/potato%20chips%20bowl" alt="Lupienky"><div class="item-details"><div class="item-header"><span class="item-name">Lupienky</span><span class="item-price">2,5 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/peanuts%20bowl" alt="Arasidy"><div class="item-details"><div class="item-header"><span class="item-name">Arasidy</span><span class="item-price">2,5 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/pistachio%20bowl" alt="Pistacie"><div class="item-details"><div class="item-header"><span class="item-name">Pistacie</span><span class="item-price">3,5 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/salty%20sticks" alt="Tycinky"><div class="item-details"><div class="item-header"><span class="item-name">Tycinky</span><span class="item-price">2,5 ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/olives%20bowl" alt="Olivy"><div class="item-details"><div class="item-header"><span class="item-name">Olivy (zelene/cierne)</span><span class="item-price">2,- ˆ</span></div></div></div>
+        <div class="menu-item"><img src="https://image.pollinations.ai/prompt/kabanos%20sausage" alt="Kabanosy"><div class="item-details"><div class="item-header"><span class="item-name">Kabanosy</span><span class="item-price">2,- ˆ</span></div></div></div>
+    </section>
+
+</div>
+
+<footer>
+    <p>&copy; 2024 LYMBADA Menu. Vsetky ceny su vratane DPH.</p>
+</footer>
+
+</body>
+</html>
+
