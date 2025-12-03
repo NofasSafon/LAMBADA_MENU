@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAMBADA MENU</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta/dist/vanta.birds.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --accent-color: #ff9800; /* Помаранчевий акцент */
+            --price-color: #ffd700; /* Золотий для цін */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        /* --- Оновлені стилі для Шапки (Header) --- */
+        header {
+            /* Встановлюємо фон у чорний колір для Vanta */
+            background-color: #000;
+            padding: 20px;
+            text-align: center;
+            position: relative; /* Шапка тепер прокручується */
+            z-index: 1000;
+            border-bottom: 3px solid var(--accent-color);
+            overflow: hidden; /* Щоб ефект не виходив за межі */
+            min-height: 150px; /* Мінімальна висота для ефекту */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Контейнер для логотипу та тексту, щоб вони були поверх ефекту */
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001; /* Вище, ніж фон Vanta */
+            position: relative;
+            /* Додаємо легку підкладку для кращої читабельності */
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 20px;
+            border-radius: 50px;
+            backdrop-filter: blur(2px);
+        }
+
+        /* Стилі для логотипу */
+        .header-logo {
+            height: 60px;
+            width: auto;
+            margin-right: 15px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
+        }
+
+        /* Стилі для заголовка */
+        header h1 {
+            margin: 0;
+            font-size: 3rem;
+            color: var(--accent-color);
+            letter-spacing: 4px;
+            font-weight: 800;
+            text-transform: uppercase;
+            /* Сильніша тінь для читабельності на динамічному фоні */
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.9);
+        }
+
+        /* --- Оновлені стилі для Навігації (Sticky Nav) --- */
+        nav {
+            background-color: #2c2c2c;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 10px 0;
+            /* Закріплюємо навігацію */
+            position: sticky;
+            top: 0; /* Прилипає до самого верху */
+            z-index: 1002; /* Завжди зверху всього */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            border-bottom: 1px solid #444;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 15px;
+            display: inline-block;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            border-radius: 20px;
+            margin: 0 5px;
+        }
+
+        nav a:hover, nav a:active {
+            background-color: var(--accent-color);
+            color: #000;
+            box-shadow: 0 0 8px var(--accent-color);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px 15px 80px; /* Додано відступ зверху */
+        }
+
+        .category-title {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            margin-top: 50px;
+            margin-bottom: 25px;
+            font-size: 2rem;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            text-align: center;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        .subcategory-title {
+            color: #fff;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            padding-left: 15px;
+            border-left: 5px solid var(--accent-color);
+            background: linear-gradient(90deg, #333 0%, transparent 100%);
+            padding: 5px 15px;
+        }
+
+        .menu-item {
+            background-color: var(--card-bg);
+            margin-bottom: 15px;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .menu-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(255, 152, 0, 0.2);
+            background-color: #2a2a2a;
+        }
+
+        .menu-item img {
+            width: 90px;
+            height: 90px;
+            object-fit: cover;
+            flex-shrink: 0;
+            border-right: 2px solid #333;
+        }
+
+        .item-details {
+            padding: 12px 15px;
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 5px;
+        }
+
+        .item-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #fff;
+            line-height: 1.2;
+            padding-right: 10px;
+        }
+
+        .item-price {
+            font-weight: 800;
+            color: var(--price-color);
+            font-size: 1.25rem;
+            white-space: nowrap;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .item-meta {
+             font-size: 0.85rem;
+             color: var(--accent-color);
+             display: block;
+             margin-bottom: 5px;
+             font-weight: bold;
+        }
+
+        .item-ingredients {
+            font-size: 0.9rem;
+            color: #ccc;
+            font-style: italic;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .set-box {
+            background: linear-gradient(135deg, #2c2c2c, #1a1a1a);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+            border: 2px solid var(--accent-color);
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(255, 152, 0, 0.15);
+        }
+        .set-box h3 { margin-top: 0; color: var(--accent-color); font-size: 1.5rem; margin-bottom: 15px; }
+        .set-box p { font-size: 1.1rem; margin: 10px 0; color: #eee; }
+        .set-price { color: var(--price-color); font-weight: 800; font-size: 1.4rem; }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: #111;
+            color: #777;
+            margin-top: 50px;
+            border-top: 1px solid #333;
+            font-size: 0.9rem;
+        }
+
+        /* --- MODAL (POPUP) STYLES --- */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 2000; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.9); 
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: #1e1e1e;
+            margin: auto;
+            padding: 0;
+            border: 2px solid var(--accent-color);
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+            animation: slideUp 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        @keyframes slideUp {
+            from {transform: translateY(50px); opacity: 0;}
+            to {transform: translateY(0); opacity: 1;}
+        }
+
+        .modal-img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            border-bottom: 3px solid var(--accent-color);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-title {
+            color: var(--accent-color);
+            font-size: 2rem;
+            margin: 10px 0;
+            text-transform: uppercase;
+            font-weight: 800;
+            text-shadow: 1px 1px 3px #000;
+        }
+
+        .modal-price {
+            color: var(--price-color);
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .modal-desc {
+            color: #e0e0e0;
+            font-size: 1.1rem;
+            font-style: italic;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            padding: 0 10px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: #fff;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10;
+            background: rgba(0,0,0,0.6);
+            width: 45px;
+            height: 45px;
+            line-height: 45px;
+            border-radius: 50%;
+            text-align: center;
+            transition: 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .close-btn:hover {
+            color: var(--accent-color);
+            background: rgba(0,0,0,0.9);
+            border-color: var(--accent-color);
+            transform: rotate(90deg);
+        }
+
+        /* Адаптивність для мобільних пристроїв */
+        @media (max-width: 480px) {
+            header { min-height: 120px; padding: 15px; }
+            .header-logo { height: 50px; margin-right: 10px; }
+            header h1 { font-size: 2.2rem; letter-spacing: 2px; }
+            
+            .menu-item img { width: 80px; height: 80px; }
+            .item-name { font-size: 1rem; }
+            .item-price { font-size: 1.15rem; }
+            .item-ingredients { font-size: 0.85rem; }
+            
+            .modal-img { height: 250px; }
+            .modal-title { font-size: 1.6rem; }
+            .modal-price { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header id="vanta-header">
+    <div class="header-content">
+        
+		  <img src="data:image/png;base64,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" alt="LAMBADA Logo" class="header-logo">
+        
+        <h1>LAMBADA</h1>
+    </div>
+</header>
+
+<nav>
+    <a href="#cocktails">Cocktails</a>
+    <a href="#shots">Shots</a>
+    <a href="#alcohol">Alkohol</a>
+    <a href="#liqueurs">Likéry</a>
+    <a href="#wine-beer">Víno & Pivo</a>
+    <a href="#coffee">Káva & Čaj</a>
+    <a href="#soft">Nealko</a>
+    <a href="#snacks">Snacks</a>
+</nav>
+
+<div class="container">
+
+    <section id="cocktails">
+        <h2 class="category-title">1. Cocktails</h2>
+
+        <div class="menu-item" onclick="openModal(this)">
+            <img src="https://image.pollinations.ai/prompt/Long%20Island%20Iced%20Tea%20cocktail%20drink%20dark%20bar" alt="Long Island">
+            <div class="item-details">
+                <div class="item-header"><span class="item-name">LONG ISLAND</span><span class="item-price">7,- €</span></div>
+                <span class="item-meta">0,3 l</span>
+                <div class="item-ingredients">Vodka, biely rum, tequila, gin, triple sec, cukrový sirup, citrón, cola</div>
+            </div>
+        </div>
+        <div class="menu-item" onclick="openModal(this)">
+            <img src="https://image.pollinations.ai/prompt/Pina%20Colada%20cocktail%20pineapple%20garnish%20dark%20background" alt="Piña Colada">
+            <div class="item-details">
+                <div class="item-header"><span class="item-name">PIÑA COLADA</span><span class="item-price">7,- €</span></div>
+                <span class="item-meta">0,3 l</span>
+                <div class="item-ingredients">Biely rum, tmavý rum, kokosový sirup, ananás džús, šľahačka</div>
+            </div>
+        </div>
+        <div class="menu-item" onclick="openModal(this)">
+            <img src="https://image.pollinations.ai/prompt/Cuba%20Libre%20cocktail%20lime%20wedge%20ice%20dark" alt="Cubalibre">
+            <div class="item-details">
+                <div class="item-header"><span class="item-name">CUBALIBRE</span><span class="item-price">5,5 €</span></div>
+                <span class="item-meta">0,3 l</span>
+                <div class="item-ingredients">Biely rum, cola, citrónová šťava, limetka</div>
+            </div>
+        </div>
+        <div class="menu-item" onclick="openModal(this)">
+            <img src="https://image.pollinations.ai/prompt/Aperol%20Spritz%20cocktail%20orange%20slice%20wine%20glass" alt="Martini Spritz">
+            <div class="item-details">
+                <div class="item-header"><span class="item-name">MARTINI SPRITZ</span><span class="item-price">6,- €</span></div>
+                <span class="item-meta">0,25 l</span>
+                <div class="item-ingredients">Martini Fiero, prosecco, soda, pomaranč</div>
+            </div>
+        </div>
+        <div class="menu-item" onclick="openModal(this)">
+            <img src="https://image.pollinations.ai/prompt/Negroni%20cocktail%20orange%20peel%20rocks%20glass%20moody" alt="Negroni">
+            <div class="item-details">
+                <div class="item-header"><span class="item-name">NEGRONI</span><span class="item-price">6,- €</span></div>
+                <span class="item-meta">0,12 l</span>
+                <div class="item-ingredients">Campari, Martini Fiero, gin, pomaranč</div>
+            </div>
+        </div>
+        <div class="menu-item" onclick="openModal(this)">
+            <img src="https://image.pollinations.ai/prompt/Gin%20Tonic%20cocktail%20lime%20juniper%20berries%20glass" alt="Gintonic">
+            <div class="item-details">
+                <div class="item-header"><span class="item-name">GINTONIC</span><span class="item-price">5,5 €</span></div>
+                <span class="item-meta">0,3 l</span>
+                <div class="item-ingredients">Gin, tonic, limetka</div>
+            </div>
+        </div>
+        <div class="menu-item" onclick="openModal(this)">
+            <img src="https://image.pollinations.ai/prompt/Fernet%20stock%20citrus%20cocktail%20glass%20ice" alt="Bavorák">
+            <div class="item-details">
+                <div class="item-header"><span class="item-name">BAVORÁK</span><span class="item-price">5,5 €</span></div>
+                <span class="item-meta">0,3 l</span>
+                <div class="item-ingredients">Fernet Stock, tonic, limetka</div>
+            </div>
+        </div>
+        <div class="menu-item" onclick="openModal(this)">
+            <img src="https://image.pollinations.ai/prompt/Becherovka%20tonic%20cocktail%20lemon%20slice%20glass" alt="Beton">
+            <div class="item-details">
+                <div class="item-header"><span class="item-name">BETON</span><span class="item-price">5,5 €</span></div>
+                <span class="item-meta">0,3 l</span>
+                <div class="item-ingredients">Becherovka, tonic, limetka</div>
+            </div>
+        </div>
+        <div class="menu-item" onclick="openModal(this)">
+            <img src="https://image.pollinations.ai/prompt/Cosmopolitan%20cocktail%20martini%20glass%20lime%20zest" alt="Cosmopolitan">
+            <div class="item-details">
+                <div class="item-header"><span class="item-name">COSMOPOLITAN</span><span class="item-price">6,- €</span></div>
+                <span class="item-meta">0,12 l</span>
+                <div class="item-ingredients">Vodka, triple sec, grenadína, limetka, pomaranč</div>
+            </div>
+        </div>
+        <div class="menu-item" onclick="openModal(this)">
+            <img src="https://image.pollinations.ai/prompt/White%20Russian%20cocktail%20rocks%20glass%20cream%20layer" alt="White Russian">
+            <div class="item-details">
+                <div class="item-header"><span class="item-name">WHITE RUSSIAN</span><span class="item-price">5,5 €</span></div>
+                <span class="item-meta">0,12 l</span>
+                <div class="item-ingredients">Vodka, kávový likér, šľahačka</div>
+            </div>
+        </div>
+        <div class="menu-item" onclick="openModal(this)">
+            <img src="https://image.pollinations.ai/prompt/Mojito%20cocktail%20mint%20leaves%20lime%20crushed%20ice" alt="Mojito">
+            <div class="item-details">
+                <div class="item-header"><span class="item-name">MOJITO</span><span class="item-price">7,- €</span></div>
+                <span class="item-meta">0,3 l</span>
+                <div class="item-ingredients">Biely rum, cukrový sirup, sprite, limetka, mäta</div>
+            </div>
+        </div>
+        <div class="menu-item" onclick="openModal(this)">
+            <img src="https://image.pollinations.ai/prompt/Margarita%20cocktail%20salt%20rim%20lime%20wedge%20glass" alt="Margarita">
+            <div class="item-details">
+                <div class="item-header"><span class="item-name">MARGARITA</span><span class="item-price">6,- €</span></div>
+                <span class="item-meta">0,12 l</span>
+                <div class="item-ingredients">Tequila, triple sec, limetka, soľ</div>
+            </div>
+        </div>
+        <div class="menu-item" onclick="openModal(this)">
+            <img src="https://image.pollinations.ai/prompt/Old%20Fashioned%20cocktail%20whiskey%20orange%20peel%20cherry%20rocks%20glass" alt="Old Fashion">
+            <div class="item-details">
+                <div class="item-header"><span class="item-name">OLD FASHION</span><span class="item-price">5,5 €</span></div>
+                <span class="item-meta">0,1 l</span>
+                <div class="item-ingredients">Red Walker, Martini Fiero, cukor, višňa</div>
+            </div>
+        </div>
+        <div class="menu-item" onclick="openModal(this)">
+            <img src="https://image.pollinations.ai/prompt/Daiquiri%20cocktail%20coupe%20glass%20lime%20wheel" alt="Daiquiri">
+            <div class="item-details">
+                <div class="item-header"><span class="item-name">DAIQUIRI</span><span class="item-price">6,- €</span></div>
+                <span class="item-meta">0,12 l</span>
+                <div class="item-ingredients">Biely rum, cukrový sirup, limetková šťava</div>
+            </div>
+        </div>
+        <div class="menu-item" onclick="openModal(this)">
+            <img src="https://image.pollinations.ai/prompt/Sex%20on%20the%20Beach%20cocktail%20orange%20slice%20cherry%20tall%20glass" alt="Sex on the Beach">
+            <div class="item-details">
+                <div class="item-header"><span class="item-name">SEX ON THE BEACH</span><span class="item-price">6,- €</span></div>
+                <span class="item-meta">0,3 l</span>
+                <div class="item-ingredients">Vodka, peach vodka, pomaranč džús, grenadína</div>
+            </div>
+        </div>
+        <div class="menu-item" onclick="openModal(this)">
+            <img src="https://image.pollinations.ai/prompt/Tequila%20Sunrise%20cocktail%20layered%20orange%20red%20glass" alt="Tequila Sunrise">
+            <div class="item-details">
+                <div class="item-header"><span class="item-name">TEQUILA SUNRISE</span><span class="item-price">6,- €</span></div>
+                <span class="item-meta">0,3 l</span>
+                <div class="item-ingredients">Tequila, grenadína, pomarančový džús</div>
+            </div>
+        </div>
+        <div class="menu-item" onclick="openModal(this)">
+            <img src="https://image.pollinations.ai/prompt/Mimosa%20cocktail%20champagne%20flute%20orange%20juice" alt="Mimosa">
+            <div class="item-details">
+                <div class="item-header"><span class="item-name">MIMOSA</span><span class="item-price">4,- €</span></div>
+                <span class="item-meta">0,2 l</span>
+                <div class="item-ingredients">Prosecco, pomarančový džús</div>
+            </div>
+        </div>
+        <div class="menu-item" onclick="openModal(this)">
+            <img src="https://image.pollinations.ai/prompt/French%2075%20cocktail%20champagne%20flute%20lemon%20twist" alt="French 75">
+            <div class="item-details">
+                <div class="item-header"><span class="item-name">FRENCH 75</span><span class="item-price">5,5 €</span></div>
+                <span class="item-meta">0,12 l</span>
+                <div class="item-ingredients">Gin, prosecco, cukrový sirup, citrón</div>
+            </div>
+        </div>
+        <div class="menu-item" onclick="openModal(this)">
+            <img src="https://image.pollinations.ai/prompt/Whiskey%20Sour%20cocktail%20foam%20cherry%20rocks%20glass" alt="Whisky Sour">
+            <div class="item-details">
+                <div class="item-header"><span class="item-name">WHISKY SOUR</span><span class="item-price">5,5 €</span></div>
+                <span class="item-meta">0,1 l</span>
+                <div class="item-ingredients">Whisky, limetka, citrón, sirup</div>
+            </div>
+        </div>
+        <div class="menu-item" onclick="openModal(this)">
+            <img src="https://image.pollinations.ai/prompt/Pink%20gin%20cocktail%20whipped%20cream%20berries%20glass" alt="Anjelova Ziara">
+            <div class="item-details">
+                <div class="item-header"><span class="item-name">ANJELOVA ŽIARA</span><span class="item-price">5,5 €</span></div>
+                <span class="item-meta">0,1 l</span>
+                <div class="item-ingredients">Grenadína, triple sec, gin, šľahačka</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="shots">
+        <h2 class="category-title">2. Shots</h2>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/B52%20layered%20shot%20cocktail%20fire" alt="B-52"><div class="item-details"><div class="item-header"><span class="item-name">B-52</span><span class="item-price">2,5 €</span></div><div class="item-ingredients">Kávový likér, Baileys, absinth</div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Blow%20Job%20shot%20cocktail%20whipped%20cream%20no%20hands" alt="Blow Job"><div class="item-details"><div class="item-header"><span class="item-name">Blow Job</span><span class="item-price">3,- €</span></div><div class="item-ingredients">Kávový likér, Baileys, šľahačka</div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Solar%20Kiss%20shot%20yellow%20orange%20lime%20slice" alt="Solar Kiss"><div class="item-details"><div class="item-header"><span class="item-name">Solar Kiss</span><span class="item-price">2,5 €</span></div><div class="item-ingredients">Peach vodka, limetkový sirup, limetka</div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Storm%20shot%20dark%20rum%20lime%20wedge" alt="Storm"><div class="item-details"><div class="item-header"><span class="item-name">Storm</span><span class="item-price">2,5 €</span></div><div class="item-ingredients">Biely rum, limetkový sirup, citrón</div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Jagerbomb%20shot%20glass%20red%20bull%20can" alt="Dark Energy"><div class="item-details"><div class="item-header"><span class="item-name">Dark Energy</span><span class="item-price">2,5 €</span></div><div class="item-ingredients">Jägermeister, Red Bull</div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/spicy%20red%20shot%20chili%20pepper" alt="Diablov dotyk"><div class="item-details"><div class="item-header"><span class="item-name">Diablov dotyk</span><span class="item-price">3,- €</span></div><div class="item-ingredients">Vodka, absinth, tabasko</div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/neon%20green%20shot%20lime%20slice%20glowing" alt="Acid"><div class="item-details"><div class="item-header"><span class="item-name">Acid</span><span class="item-price">3,- €</span></div><div class="item-ingredients">Vodka, šťava citrónová, limetkový sirup</div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/bright%20orange%20shot%20citrus%20slice" alt="Orange Bullet"><div class="item-details"><div class="item-header"><span class="item-name">Orange Bullet</span><span class="item-price">2,5 €</span></div><div class="item-ingredients">Vodka, Martini Fiero, limetkový sirup</div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/layered%20shot%20baileys%20sambuca%20grenadine%20drop" alt="Bradavka"><div class="item-details"><div class="item-header"><span class="item-name">Bradavka</span><span class="item-price">3,- €</span></div><div class="item-ingredients">Baileys, sambuca, grenadína</div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/clear%20shot%20gin%20sprite%20lime" alt="Buchana"><div class="item-details"><div class="item-header"><span class="item-name">Buchana</span><span class="item-price">2,- €</span></div><div class="item-ingredients">Borovička, Sprite</div></div></div>
+
+        <div class="set-box">
+            <h3>SÉTY (Výhodné sady)</h3>
+            <p><strong>TOP-SHOT:</strong> (B-52, 2x Blow Job, 2x Orange Bullet) — <span class="set-price">16 €</span></p>
+            <p><strong>FATAL:</strong> (2x Bradavka, 2x Acid, Diablov dotyk) — <span class="set-price">16 €</span></p>
+        </div>
+    </section>
+
+    <section id="alcohol">
+        <h2 class="category-title">3. Alkohol (Liehoviny)</h2>
+        <h3 class="subcategory-title">Vodka</h3>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Absolut%20Vodka%20bottle%20original%20blue%20label" alt="Absolut"><div class="item-details"><div class="item-header"><span class="item-name">Absolut Vodka 40%</span><span class="item-price">2,6 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Finlandia%20Vodka%20bottle%20clear%20glass" alt="Finlandia"><div class="item-details"><div class="item-header"><span class="item-name">Finlandia Vodka 40%</span><span class="item-price">2,5 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Nikolaus%20Vodka%20bottle%20slovak%20label" alt="Nikolaus"><div class="item-details"><div class="item-header"><span class="item-name">Nikolaus Vodka 38%</span><span class="item-price">2,3 €</span></div></div></div>
+
+        <h3 class="subcategory-title">Gin</h3>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Kensington%20London%20Dry%20Gin%20bottle" alt="Kensington"><div class="item-details"><div class="item-header"><span class="item-name">Kensington London 37,5%</span><span class="item-price">1,9 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Kensington%20Pink%20Gin%20bottle%20berries" alt="Kensington Pink"><div class="item-details"><div class="item-header"><span class="item-name">Kensington Pink 37,5%</span><span class="item-price">1,9 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Beefeater%20London%20Dry%20Gin%20bottle%20yeoman" alt="Beefeater"><div class="item-details"><div class="item-header"><span class="item-name">Beefeater London 40%</span><span class="item-price">2,5 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Beefeater%20Pink%20Strawberry%20Gin%20bottle" alt="Beefeater Pink"><div class="item-details"><div class="item-header"><span class="item-name">Beefeater Pink 37,5%</span><span class="item-price">2,5 €</span></div></div></div>
+
+        <h3 class="subcategory-title">Rum</h3>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Havana%20Club%203%20Anos%20Rum%20bottle%20yellow%20label" alt="Havana"><div class="item-details"><div class="item-header"><span class="item-name">Havana Club 3 Años</span><span class="item-price">2,7 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Bozkov%20Dark%20Rum%20bottle%20czech%20label" alt="Bozkov"><div class="item-details"><div class="item-header"><span class="item-name">Božkov Dark Rum 38%</span><span class="item-price">2,5 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Diplomatico%20Reserva%20Exclusiva%20Rum%20bottle" alt="Diplomatico"><div class="item-details"><div class="item-header"><span class="item-name">Diplomatico Rum 40%</span><span class="item-price">5,2 €</span></div></div></div>
+
+        <h3 class="subcategory-title">Tequila</h3>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Silver%20Tequila%20bottle%20clear%20agave" alt="Silver"><div class="item-details"><div class="item-header"><span class="item-name">Olé/Olmeca Silver</span><span class="item-price">1,9 € / 3,5 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Gold%20Tequila%20bottle%20golden%20agave" alt="Gold"><div class="item-details"><div class="item-header"><span class="item-name">Olé/Olmeca Gold</span><span class="item-price">1,9 € / 3,5 €</span></div></div></div>
+
+        <h3 class="subcategory-title">Whiskey</h3>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Johnnie%20Walker%20Red%20Label%20Whisky%20bottle" alt="Walker"><div class="item-details"><div class="item-header"><span class="item-name">Johnnie Walker Red</span><span class="item-price">3,- €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Jim%20Beam%20Bourbon%20Whiskey%20bottle%20white%20label" alt="Jim Beam"><div class="item-details"><div class="item-header"><span class="item-name">Jim Beam Bourbon</span><span class="item-price">3,2 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Tullamore%20DEW%20Irish%20Whiskey%20jug%20bottle" alt="Tullamore"><div class="item-details"><div class="item-header"><span class="item-name">Tullamore D.E.W.</span><span class="item-price">3,- €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Jameson%20Irish%20Whiskey%20bottle%20green%20glass" alt="Jameson"><div class="item-details"><div class="item-header"><span class="item-name">Jameson Irish</span><span class="item-price">3,5 €</span></div></div></div>
+
+        <h3 class="subcategory-title">Brandy & Borovička</h3>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Metaxa%205%20Star%20Brandy%20bottle" alt="Metaxa"><div class="item-details"><div class="item-header"><span class="item-name">Metaxa 5*</span><span class="item-price">2,5 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Karpatske%20Brandy%20Special%20bottle" alt="KB"><div class="item-details"><div class="item-header"><span class="item-name">Karpatské Brandy</span><span class="item-price">3,- €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Slovak%20Borovicka%20bottle%20juniper" alt="Borovicka"><div class="item-details"><div class="item-header"><span class="item-name">Slovenská/Spišská Borovička</span><span class="item-price">2,2 €</span></div></div></div>
+    </section>
+
+    <section id="liqueurs">
+        <h2 class="category-title">4. Likéry / Liehoviny</h2>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Peach%20Liqueur%20bottle%20fruit" alt="Peach"><div class="item-details"><div class="item-header"><span class="item-name">Peach Liqueur 21%</span><span class="item-price">2,- €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Campari%20Bitter%20bottle%20red" alt="Campari"><div class="item-details"><div class="item-header"><span class="item-name">Campari Bitter 25%</span><span class="item-price">3,- €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Malibu%20Coconut%20Rum%20bottle%20white" alt="Malibu"><div class="item-details"><div class="item-header"><span class="item-name">Malibu 21%</span><span class="item-price">2,5 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Martini%20Fiero%20bottle%20red%20vermouth" alt="Martini"><div class="item-details"><div class="item-header"><span class="item-name">Martini Fiero 15%</span><span class="item-price">2,5 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Tatratea%20Original%2052%20bottle%20black" alt="Tatratea"><div class="item-details"><div class="item-header"><span class="item-name">Tatratea original 52%</span><span class="item-price">2,8 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Jagermeister%20bottle%20green%20stag" alt="Jager"><div class="item-details"><div class="item-header"><span class="item-name">Jägermeister / Orange</span><span class="item-price">2,5 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Baileys%20Irish%20Cream%20bottle" alt="Baileys"><div class="item-details"><div class="item-header"><span class="item-name">Baileys 17%</span><span class="item-price">2,5 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Becherovka%20bottle%20green%20flat" alt="Becherovka"><div class="item-details"><div class="item-header"><span class="item-name">Becherovka 38%</span><span class="item-price">2,5 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Fernet%20Stock%20bottle%20bitter" alt="Fernet"><div class="item-details"><div class="item-header"><span class="item-name">Fernet Stock / Citrus</span><span class="item-price">2,2 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Absinth%20bottle%20green%20fairy" alt="Absinth"><div class="item-details"><div class="item-header"><span class="item-name">Absinth 70%</span><span class="item-price">3,5 €</span></div></div></div>
+    </section>
+
+    <section id="wine-beer">
+        <h2 class="category-title">5. Víno & Pivo</h2>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Glass%20of%20sparkling%20Prosecco" alt="Prosecco"><div class="item-details"><div class="item-header"><span class="item-name">Prosecco</span><span class="item-price">1,2 €</span></div><span class="item-meta">0,1 l</span></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Glass%20of%20red%20wine%20ruby" alt="Red Wine"><div class="item-details"><div class="item-header"><span class="item-name">Červené víno</span><span class="item-price">1,6 €</span></div><span class="item-meta">0,1 l</span></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Glass%20of%20white%20wine%20chardonnay" alt="White Wine"><div class="item-details"><div class="item-header"><span class="item-name">Biele víno</span><span class="item-price">1,6 €</span></div><span class="item-meta">0,1 l</span></div></div>
+
+        <h3 class="subcategory-title">Pivo</h3>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Pilsner%20Urquell%20beer%20bottle%20glass" alt="Pilsner"><div class="item-details"><div class="item-header"><span class="item-name">Pilsner Urquell 12° (Fľaša)</span><span class="item-price">2,5 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Birell%20non-alcoholic%20beer%20bottle" alt="Birell"><div class="item-details"><div class="item-header"><span class="item-name">Birell 0%</span><span class="item-price">2,- €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Draft%20Pilsner%20Urquell%20beer%20glass%20foam" alt="Draft Pilsner"><div class="item-details"><div class="item-header"><span class="item-name">Pilsner Urquell (Čapované)</span><span class="item-price">2,2 / 2,9 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Draft%20dark%20Saris%20beer%20glass" alt="Saris"><div class="item-details"><div class="item-header"><span class="item-name">Šariš tmavý 12° (Čapované)</span><span class="item-price">2,- / 2,5 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Glass%20of%20Kofola%20soda%20ice" alt="Kofola"><div class="item-details"><div class="item-header"><span class="item-name">Kofola original</span><span class="item-price">0,5 - 2,2 €</span></div></div></div>
+    </section>
+
+    <section id="coffee">
+        <h2 class="category-title">6. Káva & Čaj</h2>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Cup%20of%20hot%20cocoa%20marshmallows" alt="Kakao"><div class="item-details"><div class="item-header"><span class="item-name">Kakao</span><span class="item-price">2,5 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Espresso%20coffee%20cup%20crema" alt="Espresso"><div class="item-details"><div class="item-header"><span class="item-name">CaffeEspresso</span><span class="item-price">1,7 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Espresso%20Macchiato%20cup%20foam%20dot" alt="Macchiato"><div class="item-details"><div class="item-header"><span class="item-name">Caffe Macchiato</span><span class="item-price">2,2 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Cappuccino%20cup%20latte%20art%20heart" alt="Cappuccino"><div class="item-details"><div class="item-header"><span class="item-name">Cappuccino</span><span class="item-price">2,2 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Latte%20Macchiato%20tall%20glass%20layers" alt="Latte"><div class="item-details"><div class="item-header"><span class="item-name">Latte Macchiato</span><span class="item-price">2,4 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Viennese%20coffee%20glass%20whipped%20cream%20chocolate" alt="Viedenska"><div class="item-details"><div class="item-header"><span class="item-name">Viedenská káva</span><span class="item-price">2,6 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Baileys%20Cappuccino%20glass%20cream%20liqueur" alt="Baileys Cappuccino"><div class="item-details"><div class="item-header"><span class="item-name">Baileys Cappuccino</span><span class="item-price">3,9 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Irish%20Coffee%20glass%20whiskey%20cream" alt="Irska"><div class="item-details"><div class="item-header"><span class="item-name">Írska káva</span><span class="item-price">3,4 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Iced%20coffee%20glass%20ice%20cubes%20milk" alt="Ladova"><div class="item-details"><div class="item-header"><span class="item-name">Ľadová káva</span><span class="item-price">2,9 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Cup%20of%20hot%20tea%20teapot%20lemon" alt="Caj"><div class="item-details"><div class="item-header"><span class="item-name">Čaj podľa ponuky</span><span class="item-price">2,4 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Fresh%20ginger%20tea%20glass%20honey%20lemon" alt="Zazvor"><div class="item-details"><div class="item-header"><span class="item-name">Čaj z čerstvého zázvoru</span><span class="item-price">2,6 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Fresh%20mint%20tea%20glass%20leaves" alt="Mata"><div class="item-details"><div class="item-header"><span class="item-name">Čaj z čerstvej mäty</span><span class="item-price">2,6 €</span></div></div></div>
+    </section>
+
+    <section id="soft">
+        <h2 class="category-title">7. Nealko</h2>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Coca%20Cola%20glass%20ice%20bubbles" alt="Cola"><div class="item-details"><div class="item-header"><span class="item-name">Coca-Cola / Zero</span><span class="item-price">2,6 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Fanta%20orange%20glass%20ice" alt="Fanta"><div class="item-details"><div class="item-header"><span class="item-name">Fanta / Sprite / Tonic</span><span class="item-price">2,6 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Romerquelle%20mineral%20water%20bottle%20glass" alt="Romer"><div class="item-details"><div class="item-header"><span class="item-name">Romer quelle</span><span class="item-price">2,6 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Jug%20of%20water%20with%20lemon%20and%20mint" alt="Limonada"><div class="item-details"><div class="item-header"><span class="item-name">Voda s citrónom a mäta</span><span class="item-price">0,5 - 3 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Red%20Bull%20energy%20drink%20can%20pouring" alt="Red Bull"><div class="item-details"><div class="item-header"><span class="item-name">Red Bull</span><span class="item-price">3,- €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Glass%20of%20orange%20juice%20fresh%20fruit" alt="Juice"><div class="item-details"><div class="item-header"><span class="item-name">Džúsy (rôzne)</span><span class="item-price">2,6 €</span></div></div></div>
+    </section>
+
+    <section id="snacks">
+        <h2 class="category-title">8. Pochutinky</h2>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Bowl%20of%20Nachos%20with%20cheese%20dip%20jalapenos" alt="Nachos"><div class="item-details"><div class="item-header"><span class="item-name">Nachos</span><span class="item-price">5,- €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Bowl%20of%20potato%20chips%20crisps" alt="Lupienky"><div class="item-details"><div class="item-header"><span class="item-name">Lupienky</span><span class="item-price">2,5 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Bowl%20of%20roasted%20peanuts%20salted" alt="Arasidy"><div class="item-details"><div class="item-header"><span class="item-name">Arašidy</span><span class="item-price">2,5 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Bowl%20of%20pistachios%20in%20shell" alt="Pistacie"><div class="item-details"><div class="item-header"><span class="item-name">Pistácie</span><span class="item-price">3,5 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Glass%20with%20salty%20pretzel%20sticks" alt="Tycinky"><div class="item-details"><div class="item-header"><span class="item-name">Tyčinky</span><span class="item-price">2,5 €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Bowl%20of%20mixed%20green%20and%20black%20olives" alt="Olivy"><div class="item-details"><div class="item-header"><span class="item-name">Olivy (zelené/čierne)</span><span class="item-price">2,- €</span></div></div></div>
+        <div class="menu-item" onclick="openModal(this)"><img src="https://image.pollinations.ai/prompt/Kabanos%20sausages%20on%20wooden%20board" alt="Kabanosy"><div class="item-details"><div class="item-header"><span class="item-name">Kabanosy</span><span class="item-price">2,- €</span></div></div></div>
+    </section>
+
+</div>
+
+<footer>
+    <p>&copy; 2024 LAMBADA Menu. Všetky ceny sú vrátane DPH.</p>
+</footer>
+
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <img id="modal-img" class="modal-img" src="" alt="">
+        <div class="modal-body">
+            <h2 id="modal-title" class="modal-title"></h2>
+            <div id="modal-price" class="modal-price"></div>
+            <div id="modal-desc" class="modal-desc"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Ініціалізація ефекту Vanta.birds
+    VANTA.BIRDS({
+        el: "#vanta-header", // ID елемента header
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 150.00,
+        minWidth: 200.00,
+        scale: 1.00,
+        scaleMobile: 1.00,
+        backgroundColor: 0x000000, // Чорний фон
+        color1: 0xff9800, // Основний колір птахів (помаранчевий)
+        color2: 0x00ffff, // Додатковий колір для різнобарв'я (блакитний)
+        colorMode: "lerp", // Плавний перехід між кольорами
+        birdSize: 1.5,
+        wingSpan: 30.00,
+        speedLimit: 5.00,
+        separation: 20.00,
+        alignment: 20.00,
+        cohesion: 20.00,
+        quantity: 4.00 // Кількість птахів
+    });
+
+    // Логіка для модального вікна (залишається без змін)
+    const modal = document.getElementById("modal");
+    const modalImg = document.getElementById("modal-img");
+    const modalTitle = document.getElementById("modal-title");
+    const modalPrice = document.getElementById("modal-price");
+    const modalDesc = document.getElementById("modal-desc");
+
+    function openModal(element) {
+        const img = element.querySelector("img").src;
+        const title = element.querySelector(".item-name").innerText;
+        const price = element.querySelector(".item-price").innerText;
+        const descEl = element.querySelector(".item-ingredients");
+        const desc = descEl ? descEl.innerText : "";
+        
+        modalImg.src = img;
+        modalTitle.innerText = title;
+        modalPrice.innerText = price;
+        modalDesc.innerText = desc;
+
+        modal.classList.add("show");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+        modal.classList.remove("show");
+        document.body.style.overflow = "auto";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+</script>
+
+</body>
+</html>
